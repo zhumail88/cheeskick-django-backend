@@ -15,7 +15,7 @@ class UserManager(BaseUserManager["User"]):
 
     def create_user(
         self, email: str, password: str | None = None, **extra_fields: Any
-    ) -> "User":
+    ) -> User:
         """Create and save a regular user with an email address."""
         if not email:
             raise ValueError("The email address must be set.")
@@ -28,7 +28,7 @@ class UserManager(BaseUserManager["User"]):
 
     def create_superuser(
         self, email: str, password: str | None = None, **extra_fields: Any
-    ) -> "User":
+    ) -> User:
         """Create and save a superuser."""
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)

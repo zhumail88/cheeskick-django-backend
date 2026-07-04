@@ -1,5 +1,6 @@
-from django.db import migrations, models
 import django.utils.timezone
+from django.db import migrations, models
+
 from apps.users.managers import UserManager
 
 
@@ -48,11 +49,19 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "first_name",
-                    models.CharField(blank=True, max_length=150, verbose_name="first name"),
+                    models.CharField(
+                        blank=True,
+                        max_length=150,
+                        verbose_name="first name",
+                    ),
                 ),
                 (
                     "last_name",
-                    models.CharField(blank=True, max_length=150, verbose_name="last name"),
+                    models.CharField(
+                        blank=True,
+                        max_length=150,
+                        verbose_name="last name",
+                    ),
                 ),
                 (
                     "is_staff",
