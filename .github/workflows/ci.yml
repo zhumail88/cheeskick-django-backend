@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: cheeskick
+          POSTGRES_USER: cheeskick
+          POSTGRES_PASSWORD: cheeskick
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U cheeskick -d cheeskick"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Poetry
+        uses: abatilo/actions-poetry@v2
+
+      - name: Install dependencies
+        run: poetry install --no-interaction --no-ansi
+
+      - name: Run ruff
+        run: poetry run ruff check .
+
+      - name: Run tests
+        env:
+          DJANGO_SECRET_KEY: ci-secret-key
+          DJANGO_DEBUG: "0"
+          DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+          POSTGRES_DB: cheeskick
+          POSTGRES_USER: cheeskick
+          POSTGRES_PASSWORD: cheeskick
+          POSTGRES_HOST: 127.0.0.1
+          POSTGRES_PORT: "5432"
+          REDIS_URL: redis://127.0.0.1:6379/0
+        run: poetry run pytest
+
